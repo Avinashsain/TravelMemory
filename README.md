@@ -1,38 +1,54 @@
 
-# Travel Memory Application Deployment with AWS Services
+# 🚀 Travel Memory Application Deployment on AWS
 
-## Overview
-
-This guide explains how to deploy the **Travel Memory** MERN-stack application using AWS services. The deployment covers:
-
-- Hosting the application on an EC2 instance  
-- Connecting with MongoDB Compass  
-- Deploying both Frontend and Backend on EC2  
-- Creating multiple instances using AWS Launch Templates  
-- Using Nginx to serve the app on port 80  
-- Attaching an AWS Load Balancer  
-- Connecting a domain using Cloudflare  
+This repository documents the complete deployment of the **Travel Memory** MERN-stack application using AWS cloud services, including high availability, SSL, auto scaling, and domain integration.
 
 ---
 
-## Architecture Flow
+## 📌 Project Overview
+
+The **Travel Memory** application is a full-stack MERN application that allows users to store and manage travel memories. This guide explains how to:
+
+- Deploy frontend and backend on AWS EC2
+- Connect to MongoDB Atlas
+- Configure Nginx as a reverse proxy
+- Enable HTTPS using Certbot & AWS ACM
+- Scale using Launch Templates and Auto Scaling Groups
+- Attach an Application Load Balancer
+- Connect a custom domain via Cloudflare
+
+---
+
+## 🧱 Architecture Diagram
 
 ```
-User → Cloudflare Domain → AWS Load Balancer → EC2 Instances → Nginx → Node.js App → MongoDB
+User → Cloudflare Domain → AWS Load Balancer → EC2 Instances → Nginx → Node.js App → MongoDB Atlas
 ```
 
 ---
 
-## Setting Up the Application on AWS EC2
+## 🛠️ Tech Stack
 
-### Step 1: Launch EC2 Instance for Backend
+- **Frontend:** React.js
+- **Backend:** Node.js, Express.js
+- **Database:** MongoDB Atlas
+- **Cloud:** AWS EC2, ALB, ASG, ACM
+- **Web Server:** Nginx
+- **Process Manager:** PM2
+- **Domain & DNS:** Cloudflare
+- **SSL:** Let’s Encrypt (Certbot) + AWS ACM
 
+---
+
+## 🚀 Backend Deployment on AWS EC2
+
+### Step 1: Launch EC2 Instance
 - Launch an Ubuntu EC2 instance.
 - Connect via SSH.
 
 ---
 
-### Step 2: Install Required Packages (Backend Setup)
+### Step 2: Install Required Packages
 
 ```bash
 sudo apt update -y
@@ -45,7 +61,7 @@ npm -v
 
 ---
 
-### Step 3: Deploy Backend Code
+### Step 3: Clone Backend Repository
 
 ```bash
 sudo bash
@@ -62,11 +78,11 @@ cd TravelMemory/backend
 nano .env
 ```
 
-Add the following:
+Add:
 
 ```env
 PORT=3001
-MONGO_URI='ENTER_YOUR_MONGODB_CONNECTION_STRING'
+MONGO_URI=ENTER_YOUR_MONGODB_CONNECTION_STRING
 ```
 
 Save and exit.
@@ -87,105 +103,77 @@ npm install
 node index.js
 ```
 
-Your backend should now be running on:
+Backend runs at:
 
 ```
 http://<EC2_PUBLIC_IP>:3001
 ```
 
-# Connecting the Application to MongoDB Atlas
-
-This guide explains how to set up MongoDB Atlas and connect it to your application and MongoDB Compass.
-
 ---
 
-## Steps to Set Up MongoDB on Atlas
+## 🌐 MongoDB Atlas Setup & Compass Connection
 
-### 1. Log in to MongoDB Atlas
+### Step 1: Log in
 - Visit: https://cloud.mongodb.com/
-- Log in to your MongoDB Atlas account.
+- Log in to your account.
 
 ---
 
-### 2. Create Organization and Project
-- From the dashboard, create:
-  - An **Organization**
-  - A **Project** inside that organization
+### Step 2: Create Organization & Project
 
 ---
 
-### 3. Create a Cluster
-- Click **Create Cluster**.
-- Name the cluster: `herocluster1`
-- Select the **M0 Free Plan**.
-- Click **Create Deployment** to deploy the cluster.
+### Step 3: Create Cluster
+- Name: `herocluster1`
+- Select **M0 Free Plan**
+- Click **Create Deployment**
 
 ---
 
-### 4. Create a Database User
-- Go to **Database Access**.
-- Click **Add New Database User**.
-- Set a **username** and **password**.
-- Click **Create DB User**.
+### Step 4: Create Database User
+- Go to **Database Access**
+- Add new user (username + password)
 
 ---
 
-### 5. Configure Network Access
-- Go to **Network Access** from the left panel.
-- Click **Add IP Address**.
-- Enter:
+### Step 5: Configure Network Access
+- Add IP:
   ```
   0.0.0.0/0
   ```
-  to allow access from all IP addresses.
-- Confirm the changes.
+
+> ⚠️ For production, restrict to trusted IPs.
 
 ---
 
-### 6. Connect MongoDB to Compass
-- Go to the **Database** section.
-- Click **Connect**.
-- Select **Compass** as the connection method.
-- Choose **I already have MongoDB Compass** if it's installed.
+### Step 6: Connect MongoDB Compass
+- Click **Connect → Compass**
+- Copy connection string.
 
----
+Example:
 
-### 7. Copy the Connection String
-- Copy the connection string provided by MongoDB Atlas.
-
-Example format:
 ```
 mongodb+srv://<username>:<password>@cluster0.mongodb.net/?retryWrites=true&w=majority
 ```
 
 ---
 
-### 8. Connect via MongoDB Compass
-- Open **MongoDB Compass**.
-- Paste the connection string into the **New Connection** field.
-- Click **Connect**.
+### Step 7: Connect Using Compass
+- Open MongoDB Compass
+- Paste connection string
+- Click **Connect**
 
 ---
 
-## You're Connected!
-Your MongoDB Atlas database is now successfully connected and ready to use with your application and Compass.
+## 🌍 Frontend Deployment on AWS EC2
 
----
-
-### Security Tip
-For production environments, avoid using `0.0.0.0/0`. Instead, whitelist only trusted IP addresses.
-
----
-## Setting Up the Application on AWS EC2
-
-### Step 1: Launch EC2 Instance for Frontend
-
-- Launch an Ubuntu EC2 instance.
+### Step 1: Launch EC2 Instance
+- Launch Ubuntu EC2
 - Connect via SSH.
 
 ---
 
-### Step 2: Install Required Packages (Frontend Setup)
+### Step 2: Install Node & NPM
 
 ```bash
 sudo apt update -y
@@ -198,7 +186,7 @@ npm -v
 
 ---
 
-### Step 3: Deploy Frontend Code
+### Step 3: Clone Frontend Repository
 
 ```bash
 sudo bash
@@ -215,13 +203,11 @@ cd TravelMemory/frontend
 nano .env
 ```
 
-Add the following:
+Add:
 
 ```env
 REACT_APP_BACKEND_URL=http://<EC2_PUBLIC_IP>:3001
 ```
-
-Save and exit.
 
 ---
 
@@ -239,7 +225,7 @@ npm install
 npm start
 ```
 
-Your frontend should now be running on:
+Frontend runs at:
 
 ```
 http://<EC2_PUBLIC_IP>:3000
@@ -247,32 +233,17 @@ http://<EC2_PUBLIC_IP>:3000
 
 ---
 
-# Creating a Reverse Proxy Using Nginx (Frontend)
+## 🔁 Reverse Proxy Setup with Nginx
 
-This section explains how to configure Nginx as a reverse proxy for the **Travel Memory frontend** running on port `3000`.
-
----
-
-## Step 1: Install and Set Up Nginx on EC2
+### Frontend (Port 3000 → Port 80)
 
 ```bash
-sudo bash
-cd ~
-apt update -y
-apt install nginx -y
-```
-
----
-
-## Step 2: Edit Nginx Configuration
-
-Open the default configuration file:
-
-```bash
+sudo apt update -y
+sudo apt install nginx -y
 nano /etc/nginx/sites-available/default
 ```
 
-Remove the existing code and paste the following:
+Paste:
 
 ```nginx
 server {
@@ -280,7 +251,7 @@ server {
     server_name _;
 
     location / {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://<EC2_PUBLIC_IP>:3000;
         proxy_http_version 1.1;
 
         proxy_set_header Host $host;
@@ -291,57 +262,28 @@ server {
 }
 ```
 
-Save and exit.
-
----
-
-## Step 3: Restart and Test Nginx
+Reload:
 
 ```bash
 nginx -t
 systemctl reload nginx
 ```
 
----
+Test:
 
-## Step 4: Test in Browser
-
-Open your browser and navigate to:
-
-```text
+```
 http://<EC2_PUBLIC_IP>
 ```
 
-If your frontend loads successfully, 🎉 your reverse proxy is working!
-
 ---
 
-# Creating a Reverse Proxy Using Nginx (Backend)
-
-This section explains how to configure Nginx as a reverse proxy for the **Travel Memory backend** running on port `3001`.
-
----
-
-## Step 1: Install and Set Up Nginx on EC2
-
-```bash
-sudo bash
-cd ~
-apt update -y
-apt install nginx -y
-```
-
----
-
-## Step 2: Edit Nginx Configuration
-
-Open the default configuration file:
+### Backend (Port 3001 → Port 80)
 
 ```bash
 nano /etc/nginx/sites-available/default
 ```
 
-Remove the existing code and paste the following:
+Paste:
 
 ```nginx
 server {
@@ -349,7 +291,7 @@ server {
     server_name _;
 
     location / {
-        proxy_pass http://127.0.0.1:3001;
+        proxy_pass http://<EC2_PUBLIC_IP>:3001;
         proxy_http_version 1.1;
 
         proxy_set_header Host $host;
@@ -360,70 +302,47 @@ server {
 }
 ```
 
-Save and exit.
-
----
-
-## Step 3: Restart and Test Nginx
+Reload:
 
 ```bash
 nginx -t
 systemctl reload nginx
 ```
 
----
+Test:
 
-## Step 4: Test Backend in Browser or Postman
-
-Open your browser and navigate to:
-
-```text
+```
 http://<EC2_PUBLIC_IP>/trip
 ```
 
-If you receive a valid response, 🎉 your backend reverse proxy is working!
+---
+
+## 🌐 Custom Domains with Nginx
+
+### Domains Used
+- Frontend: `learningtech.store`
+- Backend: `api.learningtech.store`
+
+### DNS Records
+
+| Type | Name | Value |
+|------|------|--------|
+| A    | @    | EC2_PUBLIC_IP |
+| A    | www  | EC2_PUBLIC_IP |
+| A    | api  | EC2_PUBLIC_IP |
 
 ---
 
-# Running Frontend & Backend with Custom Domains
-
-This section shows how to run:
-
-- **Frontend** on: `https://learningtech.store`
-- **Backend API** on: `https://api.learningtech.store`
-
-## Step 1: Point Domains to Your EC2 IP
-
-In your domain DNS provider:
-
-| Type | Name | Value (EC2 Public IP) |
-|------|------|-----------------------|
-| A    | @    | <EC2_PUBLIC_IP>       |
-| A    | www  | <EC2_PUBLIC_IP>       |
-| A    | api  | <EC2_PUBLIC_IP>       |
-
-Wait a few minutes for DNS to propagate.
-
----
-
-## Step 2: Create Separate Nginx Server Blocks
-
-Create a new config file:
-
-```bash
-nano /etc/nginx/sites-available/default
-```
-
-Paste the following configuration:
+### Nginx Configuration
 
 ```nginx
-# Frontend - learningtech.store
+# Frontend
 server {
     listen 80;
     server_name learningtech.store www.learningtech.store;
 
     location / {
-        proxy_pass http://127.0.0.1:3000;
+        proxy_pass http://<EC2_PUBLIC_IP>:3000;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -432,13 +351,13 @@ server {
     }
 }
 
-# Backend - api.learningtech.store
+# Backend
 server {
     listen 80;
     server_name api.learningtech.store;
 
     location / {
-        proxy_pass http://127.0.0.1:3001;
+        proxy_pass http://<EC2_PUBLIC_IP>:3001;
         proxy_http_version 1.1;
         proxy_set_header Host $host;
         proxy_set_header X-Real-IP $remote_addr;
@@ -448,222 +367,164 @@ server {
 }
 ```
 
----
-
-## Step 3: Enable the Configuration for Frontend & Backend
+Reload:
 
 ```bash
-nano /etc/nginx/sites-available/default
-
 nginx -t
 systemctl reload nginx
 ```
 
 ---
 
-## Step 4: Test in Browser
-
-- Frontend:  
-  ```text
-  http://learningtech.store
-  ```
-
-- Backend API:  
-  ```text
-  http://api.learningtech.store
-  ```
-
-If both load correctly, 🎉 your domains are now routing properly!
-
----
-
-# Install Certbot and Enable SSL for Frontend
-
-This section explains how to secure your frontend domain using HTTPS with Certbot.
-
----
-
-## Step 1: Install Certbot
+## 🔒 Enable HTTPS with Certbot (Frontend)
 
 ```bash
-sudo bash
-cd ~
-apt update
-apt install certbot python3-certbot-nginx -y
-```
-
----
-
-## Step 2: Generate and Configure SSL Certificates
-
-```bash
+sudo apt update
+sudo apt install certbot python3-certbot-nginx -y
 sudo certbot --nginx -d learningtech.store -d www.learningtech.store
 ```
 
-Certbot will:
-- Verify domain ownership
-- Generate SSL certificates
-- Automatically update your Nginx configuration to use HTTPS
+---
+
+### Final HTTPS URLs
+
+- 🌐 https://learningtech.store
+- 🌐 https://www.learningtech.store
 
 ---
 
-## Final Nginx Configuration After SSL
-
-```nginx
-server {
-    server_name learningtech.store www.learningtech.store;
-
-    location / {
-        proxy_pass http://127.0.0.1:3000;
-        proxy_http_version 1.1;
-
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
-
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/learningtech.store/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/learningtech.store/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
-}
-
-server {
-    if ($host = www.learningtech.store) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-    if ($host = learningtech.store) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
-
-    listen 80;
-    server_name learningtech.store www.learningtech.store;
-    return 404; # managed by Certbot
-}
-```
----
-
-## Step 3: Verify DNS Records
-
-```bash
-dig +short learningtech.store
-dig +short www.learningtech.store
-```
-
-Ensure both point to your EC2 public IP.
-
----
-
-## Step 4: Reload and Test Nginx
-
-```bash
-sudo nginx -t
-sudo systemctl reload nginx
-```
-
----
-
-## Step 5: Access Your Website Securely
-
-🌐 https://learningtech.store  
-🌐 https://www.learningtech.store
-
-If your site loads with a 🔒 lock icon, your SSL setup is successful! 🎉
-
----
-
-# Install Certbot and Enable SSL for Backend API
-
-This section explains how to secure your Backend subdomain using HTTPS with Certbot.
-
----
-
-## Step 1: Install Certbot
-
-```bash
-sudo bash
-cd ~
-apt update
-apt install certbot python3-certbot-nginx -y
-```
-
----
-
-## Step 2: Generate and Configure SSL Certificates
+## 🔐 Enable HTTPS with Certbot (Backend)
 
 ```bash
 sudo certbot --nginx -d api.learningtech.store
 ```
 
-Certbot will:
-- Verify domain ownership
-- Generate SSL certificates
-- Automatically update your Nginx configuration to use HTTPS
+---
+
+### Final Backend HTTPS URL
+
+- 🌐 https://api.learningtech.store
 
 ---
 
-## 🔧 Final Nginx Configuration After SSL
+## ⚖️ Load Balancer Setup (ALB)
 
-```nginx
-server {
-    server_name api.learningtech.store;
+### Step 1: Create ALB
+- Name: `travel-memory-frontend-lb`
+- Scheme: Internet-facing
+- IP Type: IPv4
+- Select same AZs as EC2
 
-    location / {
-        proxy_pass http://127.0.0.1:3001;
-        proxy_http_version 1.1;
+---
 
-        proxy_set_header Host $host;
-        proxy_set_header X-Real-IP $remote_addr;
-        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
-        proxy_set_header X-Forwarded-Proto $scheme;
-    }
+### Step 2: Create Target Group
+- Target type: Instances
+- Protocol: HTTPS
+- Port: 443
+- Register EC2 instances
 
-    listen 443 ssl; # managed by Certbot
-    ssl_certificate /etc/letsencrypt/live/api.learningtech.store/fullchain.pem; # managed by Certbot
-    ssl_certificate_key /etc/letsencrypt/live/api.learningtech.store/privkey.pem; # managed by Certbot
-    include /etc/letsencrypt/options-ssl-nginx.conf; # managed by Certbot
-    ssl_dhparam /etc/letsencrypt/ssl-dhparams.pem; # managed by Certbot
+---
 
-}
-server {
-    if ($host = api.learningtech.store) {
-        return 301 https://$host$request_uri;
-    } # managed by Certbot
+### Step 3: Attach Target Group to ALB
 
+---
 
-    listen 80;
-    server_name api.learningtech.store;
-    return 404; # managed by Certbot
+### Step 4: Test Load Balancer
 
-}
+```
+http://travel-memory-frontend-lb-xxxx.ap-south-1.elb.amazonaws.com
 ```
 
 ---
 
-## Step 3: Verify DNS Records
+## 🔏 AWS Certificate Manager (ACM)
+
+- **Certificate ARN:**  
+  `arn:aws:acm:ap-south-1:233245302554:certificate/cc3667a6-3da5-4921-84f9-fd6293be7300`
+
+- **Domain Secured:** `lb.learningtech.store`
+- **Validation:** DNS (CNAME)
+- **Status:** Issued & Active
+
+---
+
+## 📈 Auto Scaling Group (ASG)
+
+- **ASG Name:** `travel-memory-frontend-asg`
+- **Launch Template:** `travel-memory-frontend-template`
+- **Min:** 1
+- **Desired:** 1
+- **Max:** 2
+
+Benefits:
+- Auto recovery
+- Auto scaling
+- Zero-downtime deployments
+
+---
+
+## ⚙️ Running Apps with PM2
+
+### Install PM2
 
 ```bash
-dig +short api.learningtech.store
+sudo npm install -g pm2
 ```
-
-Ensure both point to your EC2 public IP.
 
 ---
 
-## Step 4: Reload and Test Nginx
+### Backend with PM2
 
 ```bash
-sudo nginx -t
-sudo systemctl reload nginx
+cd ~/TravelMemory/backend
+pm2 start index.js --name "travel-backend"
+pm2 startup
+pm2 save
 ```
 
 ---
 
-## Step 5: Access Your Backend API Securely
+### Frontend with PM2
 
-🌐 https://api.learningtech.store
+```bash
+cd ~/TravelMemory/frontend
+npm install
+npm run build
+sudo npm install -g serve
+pm2 start serve --name "travel-frontend" -- -s build -l 3000
+pm2 save
+```
 
-If your backend api loads with a 🔒 lock icon, your SSL setup is successful! 🎉
+---
+
+### Verify
+
+```bash
+pm2 list
+```
+
+Expected:
+
+```
+travel-backend
+travel-frontend
+```
+
+---
+
+## 🎉 Deployment Complete!
+
+Your **Travel Memory** application is now:
+
+- ✅ Secure (HTTPS)
+- ✅ Scalable (ASG + ALB)
+- ✅ Highly Available
+- ✅ Production-ready
+
+---
+
+## 👨‍💻 Author
+
+**Avinash Sain**  
+AWS Cloud & DevOps Enthusiast  
+GitHub: https://github.com/Avinashsain
