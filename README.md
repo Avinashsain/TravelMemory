@@ -1,11 +1,11 @@
 
-# 🚀 Travel Memory Application Deployment on AWS
+# Travel Memory Application Deployment on AWS
 
 This repository documents the complete deployment of the **Travel Memory** MERN-stack application using AWS cloud services, including high availability, SSL, auto scaling, and domain integration.
 
 ---
 
-## 📌 Project Overview
+## Project Overview
 
 The **Travel Memory** application is a full-stack MERN application that allows users to store and manage travel memories. This guide explains how to:
 
@@ -19,7 +19,7 @@ The **Travel Memory** application is a full-stack MERN application that allows u
 
 ---
 
-## 🧱 Architecture Diagram
+## Architecture Diagram
 
 ```
 User → Cloudflare Domain → AWS Load Balancer → EC2 Instances → Nginx → Node.js App → MongoDB Atlas
@@ -27,7 +27,7 @@ User → Cloudflare Domain → AWS Load Balancer → EC2 Instances → Nginx →
 
 ---
 
-## 🛠️ Tech Stack
+## Tech Stack
 
 - **Frontend:** React.js
 - **Backend:** Node.js, Express.js
@@ -40,7 +40,7 @@ User → Cloudflare Domain → AWS Load Balancer → EC2 Instances → Nginx →
 
 ---
 
-## 🚀 Backend Deployment on AWS EC2
+## Backend Deployment on AWS EC2
 
 ### Step 1: Launch EC2 Instance
 - Launch an Ubuntu EC2 instance.
@@ -111,7 +111,7 @@ http://<EC2_PUBLIC_IP>:3001
 
 ---
 
-## 🌐 MongoDB Atlas Setup & Compass Connection
+## MongoDB Atlas Setup & Compass Connection
 
 ### Step 1: Log in
 - Visit: https://cloud.mongodb.com/
@@ -142,7 +142,7 @@ http://<EC2_PUBLIC_IP>:3001
   0.0.0.0/0
   ```
 
-> ⚠️ For production, restrict to trusted IPs.
+> For production, restrict to trusted IPs.
 
 ---
 
@@ -165,7 +165,7 @@ mongodb+srv://<username>:<password>@cluster0.mongodb.net/?retryWrites=true&w=maj
 
 ---
 
-## 🌍 Frontend Deployment on AWS EC2
+## Frontend Deployment on AWS EC2
 
 ### Step 1: Launch EC2 Instance
 - Launch Ubuntu EC2
@@ -233,7 +233,7 @@ http://<EC2_PUBLIC_IP>:3000
 
 ---
 
-## 🔁 Reverse Proxy Setup with Nginx
+## Reverse Proxy Setup with Nginx
 
 ### Frontend (Port 3000 → Port 80)
 
@@ -317,7 +317,7 @@ http://<EC2_PUBLIC_IP>/trip
 
 ---
 
-## 🌐 Custom Domains with Nginx
+## Custom Domains with Nginx
 
 ### Domains Used
 - Frontend: `learningtech.store`
@@ -376,7 +376,7 @@ systemctl reload nginx
 
 ---
 
-## 🔒 Enable HTTPS with Certbot (Frontend)
+## Enable HTTPS with Certbot (Frontend)
 
 ```bash
 sudo apt update
@@ -393,7 +393,7 @@ sudo certbot --nginx -d learningtech.store -d www.learningtech.store
 
 ---
 
-## 🔐 Enable HTTPS with Certbot (Backend)
+## Enable HTTPS with Certbot (Backend)
 
 ```bash
 sudo certbot --nginx -d api.learningtech.store
@@ -407,7 +407,7 @@ sudo certbot --nginx -d api.learningtech.store
 
 ---
 
-## ⚖️ Load Balancer Setup (ALB)
+## Load Balancer Setup (ALB)
 
 ### Step 1: Create ALB
 - Name: `travel-memory-frontend-lb`
@@ -437,7 +437,7 @@ http://travel-memory-frontend-lb-xxxx.ap-south-1.elb.amazonaws.com
 
 ---
 
-## 🔏 AWS Certificate Manager (ACM)
+## AWS Certificate Manager (ACM)
 
 - **Certificate ARN:**  
   `arn:aws:acm:ap-south-1:233245302554:certificate/cc3667a6-3da5-4921-84f9-fd6293be7300`
@@ -448,7 +448,7 @@ http://travel-memory-frontend-lb-xxxx.ap-south-1.elb.amazonaws.com
 
 ---
 
-## 📈 Auto Scaling Group (ASG)
+## Auto Scaling Group (ASG)
 
 - **ASG Name:** `travel-memory-frontend-asg`
 - **Launch Template:** `travel-memory-frontend-template`
@@ -463,7 +463,7 @@ Benefits:
 
 ---
 
-## ⚙️ Running Apps with PM2
+## Running Apps with PM2
 
 ### Install PM2
 
@@ -512,7 +512,7 @@ travel-frontend
 
 ---
 
-## 🎉 Deployment Complete!
+## Deployment Complete!
 
 Your **Travel Memory** application is now:
 
@@ -523,8 +523,7 @@ Your **Travel Memory** application is now:
 
 ---
 
-## 👨‍💻 Author
+## Author
 
 **Avinash Sain**  
-AWS Cloud & DevOps Enthusiast  
 GitHub: https://github.com/Avinashsain
